@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 
 // Desafio Batalha Naval - MateCheck
-
+// protótipo das funçoes usadas, a configuração estão após a main
 void mostraTabuleiro(int tabuleiro[10][10]);
 void posicionarNavios(int tabuleiro[10][10]);
 void limparTabuleiro(int tabuleiro[10][10]);
@@ -34,7 +36,7 @@ int main() {
         
         switch (jogar)
         {
-        case 1: posicionarNavios(tabuleiro); break;
+        case 1: limparTabuleiro(tabuleiro); posicionarNavios(tabuleiro); break;
         case 2: limparTabuleiro(tabuleiro); break;
         default: break;
         }
@@ -43,6 +45,17 @@ int main() {
     return 0;
 }
 
+// sobrescreve o tabuleiro com zeros
+void limparTabuleiro(int tabuleiro[10][10]){
+    for(int i=0; i<10; i++){
+        for(int j=0; j<10; j++){
+            
+            tabuleiro[i][j] = 0;
+        }
+    }
+}
+
+//exibe o tabuleiro
 void mostraTabuleiro(int tabuleiro[10][10]){
 
     char letras[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
@@ -74,25 +87,42 @@ void mostraTabuleiro(int tabuleiro[10][10]){
     }
 }
 
+//posiciona os navios no tabuleiro
 void posicionarNavios(int tabuleiro[10][10]){
+       
     int navio[3] = {3,3,3};
-    int _navio1 = 5;
-    int _navio2 = 3;
+    
+    int Xnavio1, Ynavio1;
+    int Xnavio2, Ynavio2;
+       
+    
+    // adicionando valores de posicao aleatorios aos navios
+    srand(time(NULL));  // inicializa a semente
+
+    Xnavio1 = Ynavio1 = rand() % 11;  // gera número de 0 a 10
+    Xnavio2 = Ynavio2 = rand() % 11;  // gera número de 0 a 10
+    
+    //implementando colisão simples a ser melhorada depois
+    //evitando bordas do tabuleiro e evitando um ao outro
+    
+    while((Xnavio1 +3) > 10){
+        Xnavio1--;
+    }
+
+    while((Ynavio2 - 3) < 0){
+        Ynavio2++;
+    }
+        
+    
+        
     // posicionando na horizontal
 
     for(int i=0; i<3; i++)
-        tabuleiro[5][_navio1++] = navio[i];
+        tabuleiro[Ynavio1][Xnavio1++] = navio[i];
     
     // posicionamento vertical
     for(int i=0; i<3; i++)
-        tabuleiro[_navio2--][2] = navio[i];
+        tabuleiro[Ynavio2--][Xnavio2] = navio[i];
 }
 
-void limparTabuleiro(int tabuleiro[10][10]){
-    for(int i=0; i<10; i++){
-        for(int j=0; j<10; j++){
-            
-            tabuleiro[i][j] = 0;
-        }
-    }
-}
+

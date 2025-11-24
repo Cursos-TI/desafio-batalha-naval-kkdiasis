@@ -21,21 +21,13 @@ int main() {
     
     int jogar = 1;
 
-    int tabuleiro[10][10] = {
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0}
-    };
+    int tabuleiro[10][10];
     
     // adicionando valores de posicao aleatorios aos navios
     srand(time(NULL));  // inicializa a semente
+    
+    //limpa e preenche o tabuleiro
+    limparTabuleiro(tabuleiro);
 
     while(jogar > 0){
         limparTela();

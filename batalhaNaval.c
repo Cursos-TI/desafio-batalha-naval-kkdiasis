@@ -10,18 +10,23 @@
 #define GREEN   "\033[32m"
 #define RED     "\033[31m"
 
+
+#define LINHAS 12
+#define COLUNAS 12
+
+
 // Desafio Batalha Naval - MateCheck
 // protótipo das funçoes usadas, a configuração estão após a main
-void mostraTabuleiro(int tabuleiro[10][10]);
-void posicionarNavios(int tabuleiro[10][10]);
-void limparTabuleiro(int tabuleiro[10][10]);
+void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]);
+void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]);
+void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]);
 void limparTela();
 
 int main() {
     
     int jogar = 1;
 
-    int tabuleiro[10][10];
+    int tabuleiro[LINHAS][COLUNAS];
     
     // adicionando valores de posicao aleatorios aos navios
     srand(time(NULL));  // inicializa a semente
@@ -53,16 +58,15 @@ int main() {
 
     return 0;
 }
-
     // funcao para limpar a tela
 void limparTela(){
-    printf("\033[2J\033[H");
+    printf("\e[H\e[2J");
 }
 
 // sobrescreve o tabuleiro com zeros
-void limparTabuleiro(int tabuleiro[10][10]){
-    for(int i=0; i<10; i++){
-        for(int j=0; j<10; j++){
+void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
+    for(int i = 0; i < LINHAS; i++){
+        for(int j = 0; j < COLUNAS; j++){
             
             tabuleiro[i][j] = 0;
         }
@@ -70,36 +74,36 @@ void limparTabuleiro(int tabuleiro[10][10]){
 }
 
 //exibe o tabuleiro
-void mostraTabuleiro(int tabuleiro[10][10]){
+void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
 
-    char letras[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-    int coluna = 1;
+    char letras[COLUNAS] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'};
     
     //Iniciando:
     printf("\n=-=-=-= BATALHA NAVAL =-=-=-=\n\n");    
     
     //Exibindo o tabuleiro
     //Enumerando a primera linha com letras
-    printf("# # ");
-
-    for(int i=0; i<10; i++){
-        printf("%c ", letras[i]);
+    printf("# # # ");
+    for(int j=0; j < COLUNAS; j++){
+        printf("%c ", letras[j]);
     }
     
     printf("\n");
-
-    //exibindo e enumerando colunas e linhas;
-    for (int i = 0; i < 10; i++) {
-        //enumerando colunas
-        printf("%d - ", coluna++);
+    
+    
+    //exibindo e enumerando as linhas;
+    short int lin = 1; // para contar as linhas a partir de 1
+    for (int i = 0; i < LINHAS; i++){
         
-        for (int j = 0; j < 10; j++) {
-            if(tabuleiro[i][j] == 0){
-                printf(BLUE "%d " RESET, tabuleiro[i][j]);
-            }else
-                printf(GREEN "%d " RESET, tabuleiro[i][j]);
-
+        lin<10? printf(" %2d - ", lin++) : printf(" %d - ", lin++);
+        
+        
+        for (int j = 0; j < COLUNAS; j++) {
+            
+            (tabuleiro[i][j] == 0) ? printf(BLUE "%d " RESET, tabuleiro[i][j]):
+                                    printf(GREEN "%d " RESET, tabuleiro[i][j]);
         }
+
         // Pula para a próxima linha após imprimir todos os elementos da linha atual
         printf("\n");
     }
@@ -108,10 +112,10 @@ void mostraTabuleiro(int tabuleiro[10][10]){
 
 // Verificando se é possível colocar navio na posição horizontal
 
-int podeColocarHorizontal(int tabuleiro[10][10], int x, int y, int tamanho){
+int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho){
     
     // Se passar do limite do tabuleiro, retorna falso
-    if (x + tamanho > 10) return 0;
+    if (x + tamanho > LINHAS) return 0;
 
     // Verifica se as posições já estão ocupadas
     for (int i = 0; i < tamanho; i++){
@@ -123,14 +127,19 @@ int podeColocarHorizontal(int tabuleiro[10][10], int x, int y, int tamanho){
 
 
 // Verifica se é possível colocar Vertical
-int podeColocarVertical(int tabuleiro[10][10], int x, int y, int tamanho){
+int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho){
 
+    int tam = (tamanho += 2); // acrescenta 2 ao tamanho para verificar uma área de 5x3
+    int y1 = y - 1;
+    int x1 = x -1;
     // Se passar do limite retorna falso
-    if (y + tamanho > 10) return 0;
+    if (y + tamanho > LINHAS) return 0;
 
     // Verifica as posições se tem algum outro posicionado
-    for (int i = 0; i < tamanho; i++){
-        if (tabuleiro[y + i][x] != 0) return 0;
+    for (int i = 0; i < tam; i++){
+        for(int j = 0; j < tamanho; j++){
+            if (tabuleiro[y1 + i][x1 + j] != 0) return 0;
+        }
     }
 
     return 1;
@@ -138,28 +147,34 @@ int podeColocarVertical(int tabuleiro[10][10], int x, int y, int tamanho){
 
 
 // Verifica se é possível colocar navio diagonal 1 "\"
-int podeColocarDiagonal(int tabuleiro[10][10], int x, int y, int tamanho, int dir){
-    int r = dir;
-    printf("%d\n", r);
-    // Se passar do limite
+int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho, int dir){
+    int r = dir; // variavel para definir a direção da diagonal
+    int tam = (tamanho += 2);
+    int x1, y1, x2, y2;
+    x1 = x - 1;
+    y1 = y - 1;
+    x2 = x - 1;
+    y2 = y + 1;
+
     if(r == 1){
-        if (x + tamanho > 10 || y + tamanho > 10) return 0;
+        // Se passar do limite retorna
+        if (x + tamanho > LINHAS || y + tamanho > COLUNAS) return 0;
     
-        // Verifica as posições para diagonal "\" separa um bloco 3x3 para evitar colisão
-        for (int i = 0; i < tamanho; i++){
-            for(int j = 0; j < tamanho; j++){
-                if (tabuleiro[y + i][x + j] != 0) return 0;
+        // Verifica as posições para diagonal "\" separa um bloco 5x5 para evitar colisão
+        for (int i = 0; i < tam; i++){
+            for(int j = 0; j < tam; j++){
+                if (tabuleiro[y1 + i][x1 + j] != 0) return 0;
                 
             }
         }
     }else if(r == 0){
         
-        if (x + tamanho > 10 || y - tamanho < 0) return 0;
+        if (x + tamanho > LINHAS || y - tamanho < 0) return 0;
         
-        // Verifica as posições para diagonal "/" separa um bloco 3x3 para evitar colisão
-        for (int i = 0; i < tamanho; i++){
-            for(int j = 0; j < tamanho; j++){
-                if (tabuleiro[y - i][x + j] != 0) return 0;
+        // Verifica as posições para diagonal "/" separa um bloco 5x5 para evitar colisão
+        for (int i = 0; i < tam; i++){
+            for(int j = 0; j < tam; j++){
+                if (tabuleiro[y2 - i][x2 + j] != 0) return 0;
 
             }
         }
@@ -170,15 +185,15 @@ int podeColocarDiagonal(int tabuleiro[10][10], int x, int y, int tamanho, int di
 
 
 // Função principal para posicionar navios no tabuleiro
-void posicionarNavios(int tabuleiro[10][10]){
+void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
     
     int tamanho = 3; // os navios têm tamanho 3
-    int x, y;
+    int x, y; // cartesiano
     
     // Inserir navio horizontal
     while (1){
-        x = rand() % 10;   // posição aleatória X
-        y = rand() % 10;   // posição aleatória Y
+        x = rand() % LINHAS;   // posição aleatória X
+        y = rand() % COLUNAS;   // posição aleatória Y
 
         if (podeColocarHorizontal(tabuleiro, x, y, tamanho)){
             for(int i = 0; i < tamanho; i++){
@@ -187,11 +202,12 @@ void posicionarNavios(int tabuleiro[10][10]){
             break;
         }
     }
-
+    
+    
     // Inserir navio vertical
     while (1){
-        x = rand() % 10;
-        y = rand() % 10;
+        x = rand() % COLUNAS; //traçado horizontal
+        y = rand() % LINHAS; //traçado vertical
 
         if (podeColocarVertical(tabuleiro, x, y, tamanho)){ // se o retorno não for verdadeiro ele não entra no if
             for(int i = 0; i < tamanho; i++){
@@ -203,8 +219,8 @@ void posicionarNavios(int tabuleiro[10][10]){
 
     // Inserir navio diagonal 1 "\" (envia int 1 para função)
     while (1){
-        x = rand() % 10;
-        y = rand() % 10;
+        x = rand() % LINHAS;
+        y = rand() % COLUNAS;
 
         if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 1)){
             for(int i = 0; i < tamanho; i++){
@@ -216,8 +232,8 @@ void posicionarNavios(int tabuleiro[10][10]){
 
     // Inserir navio diagonal 2 "/" (envia int 0 para função)
     while (1){
-        x = rand() % 10;
-        y = rand() % 10;
+        x = rand() % LINHAS;
+        y = rand() % COLUNAS;
 
         if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 0)){
             for(int i = 0; i < tamanho; i++){

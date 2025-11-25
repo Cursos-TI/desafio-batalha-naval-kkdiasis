@@ -2,25 +2,32 @@
 #include <time.h>
 #include <stdlib.h>
 
-//-------
-//definindo cores utilizando a tabela ASCII
-//-------
+//--------------------------------------------
+// Definindo cores utilizando a tabela ASCII
+//-------------------------------------------
 #define RESET   "\033[0m"
 #define BLUE    "\033[34m"
 #define GREEN   "\033[32m"
 #define RED     "\033[31m"
 
-
+//-----------------------------------------
+// Definindo tamanho do tabuleiro
+//-----------------------------------------
 #define LINHAS 12
 #define COLUNAS 12
+#define MAR 126 // '~' onde será representado como
 
-
-// Desafio Batalha Naval - MateCheck
-// protótipo das funçoes usadas, a configuração estão após a main
-void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]);
-void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]);
-void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]);
+//---------------------------------------------------------------
+// protótipo das funçoes usadas, as implementações estão após a main
+//---------------------------------------------------------------
 void limparTela();
+void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]);
+void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]);
+int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho);
+int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho);
+int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho, int dir);
+void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]);
+
 
 int main() {
     
@@ -58,22 +65,23 @@ int main() {
 
     return 0;
 }
-    // funcao para limpar a tela
+
+// funcao para limpar a tela
 void limparTela(){
     printf("\e[H\e[2J");
 }
 
-// sobrescreve o tabuleiro com zeros
+// Reinicia o tabuleiro retirando todos os navios
 void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
     for(int i = 0; i < LINHAS; i++){
         for(int j = 0; j < COLUNAS; j++){
             
-            tabuleiro[i][j] = 0;
+            tabuleiro[i][j] = MAR; // 126 = '~' na tabela ASCII 
         }
     }
 }
 
-//exibe o tabuleiro
+// Exibe o tabuleiro
 void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
 
     char letras[COLUNAS] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'};
@@ -100,8 +108,8 @@ void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
         
         for (int j = 0; j < COLUNAS; j++) {
             
-            (tabuleiro[i][j] == 0) ? printf(BLUE "%d " RESET, tabuleiro[i][j]):
-                                    printf(GREEN "%d " RESET, tabuleiro[i][j]);
+            (tabuleiro[i][j] == MAR ) ? printf(BLUE "%c " RESET, tabuleiro[i][j]):
+                                    printf(GREEN "%c " RESET, tabuleiro[i][j]);
         }
 
         // Pula para a próxima linha após imprimir todos os elementos da linha atual
@@ -110,7 +118,7 @@ void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
 }
 
 
-// Verificando se é possível colocar navio na posição horizontal
+// Verifica se é possível colocar navio na posição horizontal
 
 int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho){
     
@@ -119,7 +127,7 @@ int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tama
 
     // Verifica se as posições já estão ocupadas
     for (int i = 0; i < tamanho; i++){
-        if (tabuleiro[y][x + i] != 0) return 0;
+        if (tabuleiro[y][x + i] != MAR) return 0;
     }
 
     return 1;
@@ -138,7 +146,7 @@ int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanh
     // Verifica as posições se tem algum outro posicionado
     for (int i = 0; i < tam; i++){
         for(int j = 0; j < tamanho; j++){
-            if (tabuleiro[y1 + i][x1 + j] != 0) return 0;
+            if (tabuleiro[y1 + i][x1 + j] != MAR) return 0;
         }
     }
 
@@ -163,7 +171,7 @@ int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanh
         // Verifica as posições para diagonal "\" separa um bloco 5x5 para evitar colisão
         for (int i = 0; i < tam; i++){
             for(int j = 0; j < tam; j++){
-                if (tabuleiro[y1 + i][x1 + j] != 0) return 0;
+                if (tabuleiro[y1 + i][x1 + j] != MAR) return 0;
                 
             }
         }
@@ -174,7 +182,7 @@ int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanh
         // Verifica as posições para diagonal "/" separa um bloco 5x5 para evitar colisão
         for (int i = 0; i < tam; i++){
             for(int j = 0; j < tam; j++){
-                if (tabuleiro[y2 - i][x2 + j] != 0) return 0;
+                if (tabuleiro[y2 - i][x2 + j] != MAR) return 0;
 
             }
         }
@@ -197,7 +205,7 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
 
         if (podeColocarHorizontal(tabuleiro, x, y, tamanho)){
             for(int i = 0; i < tamanho; i++){
-                tabuleiro[y][x + i] = 1; 
+                tabuleiro[y][x + i] = 49; // 1 ASCII para fins de depuracao, mudar depois para uma constante 
             }
             break;
         }
@@ -211,7 +219,7 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
 
         if (podeColocarVertical(tabuleiro, x, y, tamanho)){ // se o retorno não for verdadeiro ele não entra no if
             for(int i = 0; i < tamanho; i++){
-                tabuleiro[y + i][x] = 2; 
+                tabuleiro[y + i][x] = 50; //ASCII 
             }
             break;
         }
@@ -224,7 +232,7 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
 
         if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 1)){
             for(int i = 0; i < tamanho; i++){
-                tabuleiro[y + i][x + i] = 3; 
+                tabuleiro[y + i][x + i] = 51; //ASCII 
             }
             break;
         }
@@ -237,7 +245,7 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
 
         if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 0)){
             for(int i = 0; i < tamanho; i++){
-                tabuleiro[y - i][x + i] = 4; 
+                tabuleiro[y - i][x + i] = 52; //ASCII 
             }
             break;
         }

@@ -27,7 +27,14 @@ int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tama
 int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho);
 int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho, int dir);
 void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]);
+void habilidades(int tabuleiro[LINHAS][COLUNAS]);
+void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]);
 
+typedef enum{
+    BLITZ = 1,
+    CRUZ,
+    FLASH
+}Habilidade;
 
 int main() {
     
@@ -47,7 +54,8 @@ int main() {
         printf("\nSelecione: \n");
         printf("1) Posicionar Navios\n");
         printf("2) Limpar tabuleiro\n");
-        printf("0) Sair\n");
+        printf("3) Habilidades\n");
+        printf("0) Sair\n\n");
         printf("Digite o numero da opcao desejada: ");
         scanf("%d", &jogar);
         
@@ -55,6 +63,7 @@ int main() {
         {
         case 1: limparTabuleiro(tabuleiro); posicionarNavios(tabuleiro); break;
         case 2: limparTabuleiro(tabuleiro); break;
+        case 3: habilidades(tabuleiro); break;
         default: break;
         }
     }
@@ -84,7 +93,6 @@ void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
 // Exibe o tabuleiro
 void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
 
-    char letras[COLUNAS] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'};
     
     //Iniciando:
     printf("\n=-=-=-= BATALHA NAVAL =-=-=-=\n\n");    
@@ -93,7 +101,7 @@ void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
     //Enumerando a primera linha com letras
     printf("# # # ");
     for(int j=0; j < COLUNAS; j++){
-        printf("%c ", letras[j]);
+        printf("%c ", 65 + j); // 'A' ASCII
     }
     
     printf("\n");
@@ -108,8 +116,15 @@ void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
         
         for (int j = 0; j < COLUNAS; j++) {
             
-            (tabuleiro[i][j] == MAR ) ? printf(BLUE "%c " RESET, tabuleiro[i][j]):
-                                    printf(GREEN "%c " RESET, tabuleiro[i][j]);
+            if(tabuleiro[i][j] == MAR ){
+                printf(BLUE "%c " RESET, tabuleiro[i][j]);
+            }
+            else if(tabuleiro[i][j] == 35){
+                printf(RED "%c " RESET, tabuleiro[i][j]);
+            }
+            else{
+                printf(GREEN "%c " RESET, tabuleiro[i][j]);
+            }
         }
 
         // Pula para a próxima linha após imprimir todos os elementos da linha atual
@@ -252,4 +267,88 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
     }
 }
 
+void habilidades(int tabuleiro[LINHAS][COLUNAS]){
+    int menu = 1;
 
+    while(menu > 0){
+        limparTela();
+        mostraTabuleiro(tabuleiro);
+        printf("\nSelecione: \n");
+        printf("1) Blitz (Cone)\n");
+        printf("2) Cruz de Fogo (Cruz)\n");
+        printf("3) Flash (Octaedro)\n");
+        printf("0) Voltar ao menu anterior\n\n");
+        printf("Digite o numero da opcao desejada: ");
+        scanf("%d", &menu);
+        
+        switch (menu)
+        {
+        case 1: ataque(BLITZ, tabuleiro); break;
+        case 2: ataque(CRUZ, tabuleiro); break;
+        case 3: ataque(FLASH, tabuleiro); break;
+        default: break;
+        }
+    }
+
+}
+
+void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]){
+
+    switch (ataque)
+    {
+        case BLITZ:
+        int jI = 1;
+        int ini = 7; // inicio da posicao (corresponde ao index das linhas)
+        int jT = 9; // corresponde ao index das colunas
+
+        for(int i=ini; i<(ini + 3); i++){
+            for(int j=0; j<jI; j++){
+                tabuleiro[i][jT + j] = 35; // '#' ASCII
+            }
+            // cont += 2;
+            jI += 2;
+            jT--;
+        }
+    break;    
+    case CRUZ:
+        for(int i=0; i<LINHAS; i++){
+            for(int j=0; j<COLUNAS; j++){
+                if(i==((LINHAS / 2) - 1) || j==((COLUNAS / 2) - 1)){
+                    tabuleiro[i][j] = 35; // '#' ASCII
+                }
+            }
+        printf("\n");
+        }
+    break;
+    case FLASH:
+        int verificador = 1;
+        jT = 2;
+        jI = 1;
+        ini = 0;
+
+        for(int i=ini; i<(ini+7); i++){
+            for(int j=0; j<jI; j++){
+                tabuleiro[i][jT + j] = 35; // '#' ASCII
+            }
+                if(verificador == 1){
+                    if(jI < 5){
+                        jI += 2;
+                        jT--;
+                    }
+                    else{
+                        verificador = 0;
+                        jI -= 2;
+                        jT++;
+                    }   
+                }
+                else{
+                    jI -= 2;
+                    jT++;
+                }
+        }
+    break;    
+    
+    default: break;
+    }
+
+}

@@ -293,13 +293,14 @@ void habilidades(int tabuleiro[LINHAS][COLUNAS]){
 }
 
 void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]){
-
+    int jI = 1;
+    int ini = 7; // inicio da posicao (corresponde ao index das linhas)
+    int jT = 9; // corresponde ao index das colunas
+    int verificador = 1;
+    
     switch (ataque)
     {
         case BLITZ:
-        int jI = 1;
-        int ini = 7; // inicio da posicao (corresponde ao index das linhas)
-        int jT = 9; // corresponde ao index das colunas
 
         for(int i=ini; i<(ini + 3); i++){
             for(int j=0; j<jI; j++){
@@ -321,7 +322,6 @@ void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]){
         }
     break;
     case FLASH:
-        int verificador = 1;
         jT = 2;
         jI = 1;
         ini = 0;

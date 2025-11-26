@@ -10,6 +10,7 @@
 #define GREEN   "\033[32m"
 #define RED     "\033[31m"
 
+
 //-----------------------------------------
 // Definindo tamanho do tabuleiro
 //-----------------------------------------
@@ -30,13 +31,15 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]);
 void habilidades(int tabuleiro[LINHAS][COLUNAS]);
 void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]);
 
-typedef enum{
+typedef enum
+{
     BLITZ = 1,
     CRUZ,
     FLASH
 }Habilidade;
 
-int main() {
+int main()
+{
     
     int jogar = 1;
 
@@ -48,7 +51,8 @@ int main() {
     //limpa e preenche o tabuleiro
     limparTabuleiro(tabuleiro);
 
-    while(jogar > 0){
+    while(jogar > 0)
+    {
         limparTela();
         mostraTabuleiro(tabuleiro);
         printf("\nSelecione: \n");
@@ -76,14 +80,18 @@ int main() {
 }
 
 // funcao para limpar a tela
-void limparTela(){
+void limparTela()
+{
     printf("\e[H\e[2J");
 }
 
 // Reinicia o tabuleiro retirando todos os navios
-void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
-    for(int i = 0; i < LINHAS; i++){
-        for(int j = 0; j < COLUNAS; j++){
+void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS])
+{
+    for(int i = 0; i < LINHAS; i++)
+    {
+        for(int j = 0; j < COLUNAS; j++)
+        {
             
             tabuleiro[i][j] = MAR; // 126 = '~' na tabela ASCII 
         }
@@ -91,7 +99,8 @@ void limparTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
 }
 
 // Exibe o tabuleiro
-void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
+void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS])
+{
 
     
     //Iniciando:
@@ -100,7 +109,8 @@ void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
     //Exibindo o tabuleiro
     //Enumerando a primera linha com letras
     printf("# # # ");
-    for(int j=0; j < COLUNAS; j++){
+    for(int j=0; j < COLUNAS; j++)
+    {
         printf("%c ", 65 + j); // 'A' ASCII
     }
     
@@ -109,17 +119,21 @@ void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
     
     //exibindo e enumerando as linhas;
     short int lin = 1; // para contar as linhas a partir de 1
-    for (int i = 0; i < LINHAS; i++){
+    for (int i = 0; i < LINHAS; i++)
+    {
         
         lin<10? printf(" %2d - ", lin++) : printf(" %d - ", lin++);
         
         
-        for (int j = 0; j < COLUNAS; j++) {
+        for (int j = 0; j < COLUNAS; j++)
+        {
             
-            if(tabuleiro[i][j] == MAR ){
+            if(tabuleiro[i][j] == MAR )
+            {
                 printf(BLUE "%c " RESET, tabuleiro[i][j]);
             }
-            else if(tabuleiro[i][j] == 35){
+            else if(tabuleiro[i][j] == 35)
+            {
                 printf(RED "%c " RESET, tabuleiro[i][j]);
             }
             else{
@@ -135,13 +149,15 @@ void mostraTabuleiro(int tabuleiro[LINHAS][COLUNAS]){
 
 // Verifica se é possível colocar navio na posição horizontal
 
-int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho){
+int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho)
+{
     
     // Se passar do limite do tabuleiro, retorna falso
     if (x + tamanho > LINHAS) return 0;
 
     // Verifica se as posições já estão ocupadas
-    for (int i = 0; i < tamanho; i++){
+    for (int i = 0; i < tamanho; i++)
+    {
         if (tabuleiro[y][x + i] != MAR) return 0;
     }
 
@@ -150,7 +166,8 @@ int podeColocarHorizontal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tama
 
 
 // Verifica se é possível colocar Vertical
-int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho){
+int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho)
+{
 
     int tam = (tamanho += 2); // acrescenta 2 ao tamanho para verificar uma área de 5x3
     int y1 = y - 1;
@@ -159,8 +176,10 @@ int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanh
     if (y + tamanho > LINHAS) return 0;
 
     // Verifica as posições se tem algum outro posicionado
-    for (int i = 0; i < tam; i++){
-        for(int j = 0; j < tamanho; j++){
+    for (int i = 0; i < tam; i++)
+    {
+        for(int j = 0; j < tamanho; j++)
+        {
             if (tabuleiro[y1 + i][x1 + j] != MAR) return 0;
         }
     }
@@ -170,7 +189,8 @@ int podeColocarVertical(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanh
 
 
 // Verifica se é possível colocar navio diagonal 1 "\"
-int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho, int dir){
+int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanho, int dir)
+{
     int r = dir; // variavel para definir a direção da diagonal
     int tam = (tamanho += 2);
     int x1, y1, x2, y2;
@@ -179,24 +199,30 @@ int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanh
     x2 = x - 1;
     y2 = y + 1;
 
-    if(r == 1){
+    if(r == 1)
+    {
         // Se passar do limite retorna
         if (x + tamanho > LINHAS || y + tamanho > COLUNAS) return 0;
     
         // Verifica as posições para diagonal "\" separa um bloco 5x5 para evitar colisão
-        for (int i = 0; i < tam; i++){
-            for(int j = 0; j < tam; j++){
+        for (int i = 0; i < tam; i++)
+        {
+            for(int j = 0; j < tam; j++)
+            {
                 if (tabuleiro[y1 + i][x1 + j] != MAR) return 0;
                 
             }
         }
-    }else if(r == 0){
+    }else if(r == 0)
+    {
         
         if (x + tamanho > LINHAS || y - tamanho < 0) return 0;
         
         // Verifica as posições para diagonal "/" separa um bloco 5x5 para evitar colisão
-        for (int i = 0; i < tam; i++){
-            for(int j = 0; j < tam; j++){
+        for (int i = 0; i < tam; i++)
+        {
+            for(int j = 0; j < tam; j++)
+            {
                 if (tabuleiro[y2 - i][x2 + j] != MAR) return 0;
 
             }
@@ -208,18 +234,22 @@ int podeColocarDiagonal(int tabuleiro[LINHAS][COLUNAS], int x, int y, int tamanh
 
 
 // Função principal para posicionar navios no tabuleiro
-void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
+void posicionarNavios(int tabuleiro[LINHAS][COLUNAS])
+{
     
     int tamanho = 3; // os navios têm tamanho 3
     int x, y; // cartesiano
     
     // Inserir navio horizontal
-    while (1){
+    while (1)
+    {
         x = rand() % LINHAS;   // posição aleatória X
         y = rand() % COLUNAS;   // posição aleatória Y
 
-        if (podeColocarHorizontal(tabuleiro, x, y, tamanho)){
-            for(int i = 0; i < tamanho; i++){
+        if (podeColocarHorizontal(tabuleiro, x, y, tamanho))
+        {
+            for(int i = 0; i < tamanho; i++)
+            {
                 tabuleiro[y][x + i] = 49; // 1 ASCII para fins de depuracao, mudar depois para uma constante 
             }
             break;
@@ -228,12 +258,15 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
     
     
     // Inserir navio vertical
-    while (1){
+    while (1)
+    {
         x = rand() % COLUNAS; //traçado horizontal
         y = rand() % LINHAS; //traçado vertical
 
-        if (podeColocarVertical(tabuleiro, x, y, tamanho)){ // se o retorno não for verdadeiro ele não entra no if
-            for(int i = 0; i < tamanho; i++){
+        if (podeColocarVertical(tabuleiro, x, y, tamanho))
+        { // se o retorno não for verdadeiro ele não entra no if
+            for(int i = 0; i < tamanho; i++)
+            {
                 tabuleiro[y + i][x] = 50; //ASCII 
             }
             break;
@@ -241,12 +274,15 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
     }
 
     // Inserir navio diagonal 1 "\" (envia int 1 para função)
-    while (1){
+    while (1)
+    {
         x = rand() % LINHAS;
         y = rand() % COLUNAS;
 
-        if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 1)){
-            for(int i = 0; i < tamanho; i++){
+        if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 1))
+        {
+            for(int i = 0; i < tamanho; i++)
+            {
                 tabuleiro[y + i][x + i] = 51; //ASCII 
             }
             break;
@@ -254,12 +290,15 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
     }
 
     // Inserir navio diagonal 2 "/" (envia int 0 para função)
-    while (1){
+    while (1)
+    {
         x = rand() % LINHAS;
         y = rand() % COLUNAS;
 
-        if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 0)){
-            for(int i = 0; i < tamanho; i++){
+        if (podeColocarDiagonal(tabuleiro, x, y, tamanho, 0))
+        {
+            for(int i = 0; i < tamanho; i++)
+            {
                 tabuleiro[y - i][x + i] = 52; //ASCII 
             }
             break;
@@ -267,10 +306,12 @@ void posicionarNavios(int tabuleiro[LINHAS][COLUNAS]){
     }
 }
 
-void habilidades(int tabuleiro[LINHAS][COLUNAS]){
+void habilidades(int tabuleiro[LINHAS][COLUNAS])
+{
     int menu = 1;
 
-    while(menu > 0){
+    while(menu > 0)
+    {
         limparTela();
         mostraTabuleiro(tabuleiro);
         printf("\nSelecione: \n");
@@ -292,7 +333,8 @@ void habilidades(int tabuleiro[LINHAS][COLUNAS]){
 
 }
 
-void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]){
+void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS])
+{
     int jI = 1;
     int ini = 7; // inicio da posicao (corresponde ao index das linhas)
     int jT = 9; // corresponde ao index das colunas
@@ -302,8 +344,10 @@ void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]){
     {
         case BLITZ:
 
-        for(int i=ini; i<(ini + 3); i++){
-            for(int j=0; j<jI; j++){
+        for(int i=ini; i<(ini + 3); i++)
+        {
+            for(int j=0; j<jI; j++)
+            {
                 tabuleiro[i][jT + j] = 35; // '#' ASCII
             }
             // cont += 2;
@@ -312,9 +356,12 @@ void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]){
         }
     break;    
     case CRUZ:
-        for(int i=0; i<LINHAS; i++){
-            for(int j=0; j<COLUNAS; j++){
-                if(i==((LINHAS / 2) - 1) || j==((COLUNAS / 2) - 1)){
+        for(int i=0; i<LINHAS; i++)
+        {
+            for(int j=0; j<COLUNAS; j++)
+            {
+                if(i==((LINHAS / 2) - 1) || j==((COLUNAS / 2) - 1))
+                {
                     tabuleiro[i][j] = 35; // '#' ASCII
                 }
             }
@@ -326,12 +373,16 @@ void ataque(int ataque, int tabuleiro[LINHAS][COLUNAS]){
         jI = 1;
         ini = 0;
 
-        for(int i=ini; i<(ini+7); i++){
-            for(int j=0; j<jI; j++){
+        for(int i=ini; i<(ini+7); i++)
+        {
+            for(int j=0; j<jI; j++)
+            {
                 tabuleiro[i][jT + j] = 35; // '#' ASCII
             }
-                if(verificador == 1){
-                    if(jI < 5){
+                if(verificador == 1)
+                {
+                    if(jI < 5)
+                    {
                         jI += 2;
                         jT--;
                     }
